@@ -141,6 +141,8 @@ Innovation areas addressed: physics-informed AI, edge AI (TorchScript JIT), hybr
                                                               - EFI_STATUS (Msg 225)
 ```
 
+[![Architecture diagram of ahireavadhut/majdhaar](https://gitdiagram.com/ahireavadhut/majdhaar/diagram.png)](https://gitdiagram.com/ahireavadhut/majdhaar?utm_source=readme&utm_medium=picture)
+
 **Independence guarantee:** the telemetry decoder and the physics kernel share no plant model implementation. The twin is a reduced-order model calibrated against frozen healthy baseline runs.
 
 ---
