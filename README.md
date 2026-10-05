@@ -4,9 +4,6 @@
 **Problem Statement:** SIH26054, AI-Enabled Real-Time Digital Twin System for Health Monitoring, Fault Prediction and Mission Management
 **Sponsor:** DRDO | **Category:** Software | **Theme:** Robotics and Drones
 
-**Target platform:** DRDO TAPAS-BH-201 MALE UAV, Rotax 914 F / 915 iS turbocharged boxer engine
-**Standards roadmap:** DO-178C Level C, MIL-STD-810H, ATA-100, ARINC 825, MAVLink v2
-
 ---
 
 ## Table of Contents
