@@ -1,0 +1,353 @@
+/* ==========================================================================
+   DRDO TAPAS-BH-201 Ground Control Station (GCS) Operator Console Styling
+   Aerospace Cyber-Defense Dark Interface Theme (#000000 / MIL-STD-1472H)
+   ========================================================================== */
+
+:root {
+  --bg-dark: #000000;
+  --panel-bg: #07090e;
+  --panel-bg-elevated: #0d121c;
+  --accent-emerald: #10b981;
+  --accent-cyan: #06b6d4;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #a855f7;
+  --accent-blue: #38bdf8;
+  --border-subtle: #1e293b;
+  --border-muted: #334155;
+  --text-main: #f1f5f9;
+  --text-dim: #94a3b8;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at 50% 0%, #0c1527 0%, #000000 75%);
+  min-height: 100vh;
+}
+
+.font-orbitron {
+  font-family: var(--font-display);
+}
+
+/* Custom Tactical Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* Tactical Panel Cards */
+.tactical-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.tactical-card:hover {
+  border-color: #334155;
+}
+
+/* High-DPI Canvas Rendering - Crisp Anti-Aliasing for HUDs */
+canvas {
+  display: block;
+  image-rendering: auto;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  outline: none;
+  transition: background 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #38bdf8;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  border: 2px solid #0c1017;
+}
+
+/* Button & Hotkey Styling */
+.btn-fault {
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid #27272a;
+  background: #111827;
+  color: #d1d5db;
+}
+.btn-fault:hover {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+.btn-fault:active {
+  transform: translateY(1px);
+}
+
+.hotkey-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #facc15;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+/* Visual Alert Pulse Animations (CAUTION / CRITICAL) */
+@keyframes alert-pulse-amber {
+  0%, 100% {
+    border-color: rgba(245, 158, 11, 0.45);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.2), inset 0 0 8px rgba(245, 158, 11, 0.08);
+  }
+  50% {
+    border-color: rgba(245, 158, 11, 0.95);
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.5), inset 0 0 16px rgba(245, 158, 11, 0.18);
+  }
+}
+
+@keyframes alert-pulse-red {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.25), inset 0 0 12px rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 1.0);
+    box-shadow: 0 0 32px rgba(239, 68, 68, 0.75), inset 0 0 24px rgba(239, 68, 68, 0.35);
+  }
+}
+
+.card-caution-pulse {
+  animation: alert-pulse-amber 1.8s infinite ease-in-out !important;
+  border-width: 1.5px !important;
+}
+
+.card-critical-pulse {
+  animation: alert-pulse-red 1.1s infinite ease-in-out !important;
+  border-width: 2px !important;
+}
+
+/* Disconnect & Link Loss Animations */
+@keyframes blink-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-blink {
+  animation: blink-warning 1s infinite ease-in-out;
+}
+
+/* Toast Notifications Container */
+#gcs-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.gcs-toast {
+  pointer-events: auto;
+  background: rgba(13, 18, 28, 0.95);
+  border: 1px solid #38bdf8;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(56, 189, 248, 0.25);
+  padding: 10px 16px;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slide-in-toast 0.25s ease-out forwards;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  min-width: 280px;
+}
+.gcs-toast.toast-warn {
+  border-color: #f59e0b;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(245, 158, 11, 0.3);
+}
+.gcs-toast.toast-danger {
+  border-color: #ef4444;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(239, 68, 68, 0.4);
+}
+.gcs-toast.toast-success {
+  border-color: #10b981;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes slide-in-toast {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Tactical Tables & Modal Formatting */
+.tactical-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.tactical-table th {
+  background: #0f172a;
+  color: #38bdf8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 12px;
+  border: 1px solid #1e293b;
+  text-align: left;
+}
+.tactical-table td {
+  padding: 8px 12px;
+  border: 1px solid #1e293b;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+.tactical-table tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.45);
+}
+.tactical-table tr:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.badge-pass {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
+}
+
+.badge-fail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+
+.badge-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+/* Markdown typography in modal */
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3 {
+  font-family: var(--font-display);
+  color: #38bdf8;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.markdown-rendered h1 {
+  font-size: 16px;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 6px;
+  color: #38bdf8;
+}
+.markdown-rendered h2 {
+  font-size: 13px;
+  color: #34d399;
+}
+.markdown-rendered h3 {
+  font-size: 12px;
+  color: #f59e0b;
+}
+.markdown-rendered p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+.markdown-rendered ul,
+.markdown-rendered ol {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+.markdown-rendered li {
+  margin-bottom: 4px;
+}
+.markdown-rendered code {
+  background: #1e293b;
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+.markdown-rendered pre {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 12px 0;
+}

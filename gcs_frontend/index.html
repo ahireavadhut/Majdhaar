@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRDO TAPAS-BH-201 // Aero Piston Engine Digital Twin (SIH 26054)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-black text-gray-100 font-mono select-none">
+  <!-- Top Navigation / Defense Header Bar -->
+  <header class="border-b border-gray-800 bg-black/90 backdrop-blur px-5 py-3 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      <div class="h-9 w-9 border-2 border-emerald-500 rounded bg-emerald-950/40 flex items-center justify-center font-bold text-emerald-400 font-orbitron text-lg shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+        DT
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-orbitron font-bold text-sm tracking-wider text-white">DRDO TAPAS-BH-201</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-900/50 text-emerald-400 border border-emerald-700/50 font-bold">MALE UAV</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-blue-900/40 text-blue-400 border border-blue-700/40">SIH 26054</span>
+        </div>
+        <div class="text-[11px] text-gray-400">Powerplant: <span class="text-gray-200">Rotax 914 F / 915 iS Turbocharged Boxer</span> | FADEC-v4.18</div>
+      </div>
+    </div>
+
+    <!-- Active Run & Telemetry Mode Selector -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1.5 rounded text-xs">
+        <span class="text-gray-400">DATA SOURCE:</span>
+        <select id="run-selector" class="bg-black text-cyan-400 border border-gray-700 rounded px-2 py-0.5 text-xs font-mono focus:outline-none focus:border-cyan-500">
+          <option value="run02_healthy_cruise_climb">run02_healthy_cruise_climb (Healthy Cruise)</option>
+          <option value="run01_healthy_baseline_ground_idle">run01_healthy_baseline_ground_idle (Idle Base)</option>
+          <option value="run03_held_out_validation_loiter">run03_held_out_validation_loiter (Loiter)</option>
+          <option value="run04_fault_injection_injector_coking">run04_fault_injection_injector_coking (Injector Clog)</option>
+          <option value="run05_fault_injection_exhaust_valve">run05_fault_injection_exhaust_valve (Valve Recession)</option>
+          <option value="run06_fault_injection_ring_scuffing">run06_fault_injection_ring_scuffing (Ring Scuffing)</option>
+          <option value="run07_fault_injection_turbo_drag">run07_fault_injection_turbo_drag (Turbo Drag)</option>
+          <option value="run08_fault_injection_oil_shear">run08_fault_injection_oil_shear (Oil Shear)</option>
+          <option value="run09_fault_injection_thermocouple_drift">run09_fault_injection_thermocouple_drift (Sensor Drift)</option>
+        </select>
+      </div>
+
+      <!-- Live / Replay Badge -->
+      <div id="stream-badge" class="px-3 py-1 rounded text-xs font-bold border flex items-center gap-1.5 bg-cyan-950/40 text-cyan-400 border-cyan-700/50 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+        <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span id="stream-text">REPLAY STREAM</span>
+      </div>
+
+      <!-- Connection Indicator -->
+      <div id="conn-indicator" class="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-950/30 border border-emerald-800/40 px-2.5 py-1 rounded">
+        <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+        <span id="conn-text">50 Hz SYNC</span>
+      </div>
+
+      <!-- Compliance & Verification Modals -->
+      <button id="btn-open-traceability" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-cyan-300 px-2.5 py-1 rounded transition">
+        📋 DO-178C MATRIX
+      </button>
+      <button id="btn-open-verification" class="text-xs bg-gray-900 hover:bg-gray-800 border border-gray-700 text-emerald-300 px-2.5 py-1 rounded transition">
+        📊 TEST REPORT
+      </button>
+    </div>
+  </header>
+
+  <!-- Modal Dialog for Compliance / Verification -->
+  <div id="doc-modal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur flex items-center justify-center p-4 lg:p-8">
+    <div class="bg-[#0a0e17] border border-gray-700 rounded-lg max-w-5xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="border-b border-gray-800 px-6 py-3.5 flex items-center justify-between bg-black/50">
+        <div class="flex items-center gap-3">
+          <span class="h-3 w-3 bg-cyan-500 rounded-sm"></span>
+          <div>
+            <h3 id="modal-title" class="font-orbitron font-bold text-sm text-cyan-400">DOCUMENT VIEWER</h3>
+            <span id="modal-subtitle" class="text-[10px] text-gray-400 font-mono">DO-178C VERIFICATION EVIDENCE & SPECIFICATION AUDIT</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="modal-tab-group" class="hidden flex items-center bg-gray-900 border border-gray-800 rounded p-0.5 text-[11px]">
+            <button id="btn-modal-view-visual" class="px-2.5 py-1 rounded bg-cyan-950 text-cyan-300 font-bold border border-cyan-800/60">TACTICAL VIEW</button>
+            <button id="btn-modal-view-raw" class="px-2.5 py-1 rounded text-gray-400 hover:text-gray-200">RAW SOURCE</button>
+          </div>
+          <button id="modal-close" class="text-gray-400 hover:text-white font-bold text-lg px-2 py-0.5 rounded hover:bg-gray-800 transition">✕</button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto font-mono text-xs text-gray-300 leading-relaxed markdown-rendered" id="modal-body">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <!-- Telemetry Link Loss & Automatic Reconnect Banner -->
+  <div id="conn-alert-banner" class="hidden bg-red-950/90 border-b border-red-600 px-5 py-2 flex items-center justify-between text-xs text-red-200">
+    <div class="flex items-center gap-3 font-bold">
+      <span class="text-red-400 text-sm animate-blink">⚠️</span>
+      <span class="font-orbitron text-red-300">AVIONICS TELEMETRY DOWNLINK OFFLINE:</span>
+      <span id="reconnect-status-text" class="text-white font-mono">Reconnecting in 3s (Attempt 1)...</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-reconnect-now" class="bg-red-600 hover:bg-red-500 text-black font-bold px-3 py-1 rounded text-xs transition flex items-center gap-1.5 shadow-lg">
+        <span>🔄 RECONNECT NOW</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Explicit Fault Injection Warning Banner (Shows when fault active) -->
+  <div id="fault-alert-banner" class="hidden bg-amber-950/80 border-b border-amber-600/80 px-5 py-1.5 flex items-center justify-between text-xs text-amber-200">
+    <div class="flex items-center gap-2 font-bold">
+      <span class="text-amber-400 font-orbitron">⚠️ CONTROLLED SOFTWARE TEST FAULT ACTIVE:</span>
+      <span id="active-fault-name" class="text-amber-300 underline font-mono">NONE</span>
+      <span class="text-[10px] bg-amber-900/60 px-2 py-0.5 rounded border border-amber-700 text-amber-300">EXPLICIT TEST TRANSFORMATION — NOT NATURAL PHYSICAL WEAR</span>
+    </div>
+    <button id="btn-clear-fault-banner" class="bg-amber-600 hover:bg-amber-500 text-black font-bold px-3 py-0.5 rounded text-xs transition">
+      CLEAR FAULT
+    </button>
+  </div>
+
+  <!-- Main Dashboard Grid -->
+  <main class="p-4 grid grid-cols-12 gap-4 max-w-[1920px] mx-auto">
+    <!-- LEFT COLUMN: Powerplant Boxer Cutaway & Multi-Cylinder Heatmap (Cols 1-5) -->
+    <section class="col-span-12 lg:col-span-5 flex flex-col gap-4">
+      <!-- 4-Cylinder Boxer Cross-Section Card -->
+      <div id="card-boxer" class="tactical-card p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-emerald-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Powerplant Physical Cutaway (4-Cyl Boxer)
+            </h2>
+          </div>
+          <span class="text-[10px] text-gray-500 font-mono">FIRING: 1-3-4-2</span>
+        </div>
+
+        <!-- Canvas Animation of Boxer Engine (Retina High-DPI Scaled) -->
+        <div class="relative w-full h-[250px] bg-black/60 rounded border border-gray-900 flex items-center justify-center overflow-hidden">
+          <canvas id="boxer-canvas" class="w-full h-full"></canvas>
+          <div class="absolute bottom-2 left-3 text-[10px] text-gray-500 flex gap-4">
+            <div>RPM: <span id="dyn-rpm" class="text-emerald-400 font-bold">4800</span></div>
+            <div>MAP: <span id="dyn-map" class="text-cyan-400 font-bold">98.2</span> kPa</div>
+            <div>THR: <span id="dyn-thr" class="text-amber-400 font-bold">75.0</span> %</div>
+          </div>
+        </div>
+
+        <!-- Per-Cylinder Live Status Table -->
+        <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+          <div id="cyl-card-1" class="border border-gray-800 bg-black/40 p-2 rounded transition-all duration-300">
+            <div class="text-[10px] text-gray-400 font-bold">CYLINDER #1</div>
+            <div class="text-sm font-bold text-emerald-400 mt-1"><span id="val-cht-1">105</span>°C <span class="text-[9px] text-gray-400 font-normal">CHT</span></div>
+            <div class="text-xs text-orange-400"><span id="val-egt-1">810</span>°C <span class="text-[9px] text-gray-400 font-normal">EGT</span></div>
+            <div class="text-[10px] text-cyan-400 mt-0.5">IMEP: <span id="val-imep-1">6.2</span> bar</div>
+          </div>
+          <div id="cyl-card-2" class="border border-gray-800 bg-black/40 p-2 rounded transition-all duration-300">
+            <div class="text-[10px] text-gray-400 font-bold">CYLINDER #2</div>
+            <div class="text-sm font-bold text-emerald-400 mt-1"><span id="val-cht-2">104</span>°C <span class="text-[9px] text-gray-400 font-normal">CHT</span></div>
+            <div class="text-xs text-orange-400"><span id="val-egt-2">805</span>°C <span class="text-[9px] text-gray-400 font-normal">EGT</span></div>
+            <div class="text-[10px] text-cyan-400 mt-0.5">IMEP: <span id="val-imep-2">6.1</span> bar</div>
+          </div>
+          <div id="cyl-card-3" class="border border-gray-800 bg-black/40 p-2 rounded transition-all duration-300">
+            <div class="text-[10px] text-gray-400 font-bold">CYLINDER #3</div>
+            <div class="text-sm font-bold text-emerald-400 mt-1"><span id="val-cht-3">106</span>°C <span class="text-[9px] text-gray-400 font-normal">CHT</span></div>
+            <div class="text-xs text-orange-400"><span id="val-egt-3">815</span>°C <span class="text-[9px] text-gray-400 font-normal">EGT</span></div>
+            <div class="text-[10px] text-cyan-400 mt-0.5">IMEP: <span id="val-imep-3">6.3</span> bar</div>
+          </div>
+          <div id="cyl-card-4" class="border border-gray-800 bg-black/40 p-2 rounded transition-all duration-300">
+            <div class="text-[10px] text-gray-400 font-bold">CYLINDER #4</div>
+            <div class="text-sm font-bold text-emerald-400 mt-1"><span id="val-cht-4">105</span>°C <span class="text-[9px] text-gray-400 font-normal">CHT</span></div>
+            <div class="text-xs text-orange-400"><span id="val-egt-4">808</span>°C <span class="text-[9px] text-gray-400 font-normal">EGT</span></div>
+            <div class="text-[10px] text-cyan-400 mt-0.5">IMEP: <span id="val-imep-4">6.2</span> bar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thermal Spread Matrix -->
+      <div id="card-thermal-spread" class="tactical-card p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-orange-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Multi-Cylinder Thermal Spread Matrix
+            </h2>
+          </div>
+          <span class="text-[10px] text-gray-400">UNITS: DEG C</span>
+        </div>
+
+        <!-- CHT Spread Bar -->
+        <div class="mb-3">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-gray-300">CHT Spread (Max - Min): <span id="val-cht-spread" class="text-emerald-400 font-bold">2.1</span>°C</span>
+            <span class="text-gray-500 text-[10px]">WARN LIMIT: 15°C</span>
+          </div>
+          <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+            <div id="bar-cht-spread" class="h-full bg-emerald-500 transition-all duration-300" style="width: 14%;"></div>
+          </div>
+        </div>
+
+        <!-- EGT Spread Bar -->
+        <div class="mb-3">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-gray-300">EGT Spread (Max - Min): <span id="val-egt-spread" class="text-orange-400 font-bold">10.0</span>°C</span>
+            <span class="text-gray-500 text-[10px]">WARN LIMIT: 50°C</span>
+          </div>
+          <div class="w-full h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
+            <div id="bar-egt-spread" class="h-full bg-orange-500 transition-all duration-300" style="width: 20%;"></div>
+          </div>
+        </div>
+
+        <!-- Real-Time 60s Rolling Thermal Dynamics & Spread Trend Chart -->
+        <div class="mt-4 pt-3 border-t border-gray-800/80">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              Live 60s Rolling Thermal Dynamics & Spread
+            </span>
+            <div class="flex items-center gap-3 text-[9px] font-mono">
+              <span class="flex items-center gap-1 text-cyan-400"><span class="inline-block w-2.5 h-0.5 bg-cyan-400"></span>CHT SPREAD</span>
+              <span class="flex items-center gap-1 text-orange-400"><span class="inline-block w-2.5 h-0.5 bg-orange-400"></span>EGT SPREAD</span>
+              <span class="flex items-center gap-1 text-emerald-400"><span class="inline-block w-2.5 h-0.5 border-t border-dashed border-emerald-400"></span>CHT MEAN</span>
+            </div>
+          </div>
+          <div class="relative w-full h-[155px] bg-black/60 rounded border border-gray-900 overflow-hidden">
+            <canvas id="thermal-trend-canvas" class="w-full h-full"></canvas>
+          </div>
+          <div class="flex items-center justify-between text-[9px] text-gray-500 mt-1 font-mono">
+            <span>Window: -60s to NOW</span>
+            <span>WARN LIMITS: CHT 15°C | EGT 50°C</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fluids & Lubrication Gauges -->
+      <div id="card-fluids" class="tactical-card p-4 grid grid-cols-3 gap-3 text-center">
+        <div class="p-2 border border-gray-800/80 rounded bg-black/30">
+          <div class="text-[10px] text-gray-400">OIL PRESSURE</div>
+          <div class="text-base font-bold text-cyan-400 mt-1"><span id="val-oil-p">3.82</span> <span class="text-xs font-normal">bar</span></div>
+          <div class="text-[9px] text-gray-500">LIMIT: 1.5 - 5.5 bar</div>
+        </div>
+        <div class="p-2 border border-gray-800/80 rounded bg-black/30">
+          <div class="text-[10px] text-gray-400">OIL TEMP</div>
+          <div class="text-base font-bold text-amber-400 mt-1"><span id="val-oil-t">92.0</span> <span class="text-xs font-normal">°C</span></div>
+          <div class="text-[9px] text-gray-500">MAX: 130°C</div>
+        </div>
+        <div class="p-2 border border-gray-800/80 rounded bg-black/30">
+          <div class="text-[10px] text-gray-400">CRANKCASE PRESS</div>
+          <div class="text-base font-bold text-emerald-400 mt-1"><span id="val-crank-p">2.4</span> <span class="text-xs font-normal">mbar</span></div>
+          <div class="text-[9px] text-gray-500">WARN: > 8.0 mbar</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIDDLE COLUMN: Diagnostics, XAI Cards, and Virtual Sensors (Cols 6-9) -->
+    <section class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+      <!-- Intelligent Diagnostic & XAI Attribution Card -->
+      <div id="card-diagnostics" class="tactical-card p-4 relative transition-all duration-300">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-red-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Intelligent Diagnostic & XAI Isolation
+            </h2>
+          </div>
+          <span id="diag-severity-badge" class="px-2 py-0.5 rounded text-[10px] font-bold border bg-emerald-950/60 text-emerald-400 border-emerald-700">
+            SYSTEM HEALTHY
+          </span>
+        </div>
+
+        <div id="diag-fault-box" class="border border-gray-800 bg-black/50 p-3 rounded mb-3">
+          <div class="text-[10px] text-gray-400 uppercase">ISOLATED FAULT CLASSIFICATION:</div>
+          <div id="diag-fault-name" class="font-orbitron font-bold text-sm text-emerald-400 mt-0.5">
+            Engine Systems Operating Nominally
+          </div>
+          <div class="mt-2 text-xs text-gray-300">
+            <span class="text-gray-500 font-bold">ATA-100 WORK ORDER:</span>
+            <div id="diag-work-order" class="text-cyan-300 font-mono text-[11px] mt-0.5">
+              ATA-72-00: All parameters within certified operational baseline envelope.
+            </div>
+          </div>
+          <div class="mt-2 text-xs text-gray-400 text-[11px]">
+            <span class="text-gray-500 font-bold">PRECURSOR SIGNATURE:</span>
+            <div id="diag-precursor" class="text-gray-300 mt-0.5">
+              Multi-cylinder thermal differentials and crankcase pressures nominal.
+            </div>
+          </div>
+        </div>
+
+        <!-- XAI Feature Attribution Breakdown -->
+        <div class="border border-gray-800/80 bg-black/30 p-2.5 rounded">
+          <div class="flex justify-between items-center text-[10px] text-gray-400 mb-1.5">
+            <span class="font-bold uppercase tracking-wider">XAI Root-Cause Feature Attribution</span>
+            <span>PINN RESIDUAL WEIGHTS</span>
+          </div>
+          <div id="xai-bars-container" class="flex flex-col gap-1.5 text-[11px]">
+            <div>
+              <div class="flex justify-between text-gray-400 text-[10px]">
+                <span>Thermal Balance (CHT/EGT):</span>
+                <span id="xai-p-thermal">12%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                <div id="xai-bar-thermal" class="h-full bg-cyan-500" style="width: 12%;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-gray-400 text-[10px]">
+                <span>Lubrication Dynamics:</span>
+                <span id="xai-p-lube">8%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                <div id="xai-bar-lube" class="h-full bg-emerald-500" style="width: 8%;"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-gray-400 text-[10px]">
+                <span>Blowby & Ring Pack:</span>
+                <span id="xai-p-blowby">5%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                <div id="xai-bar-blowby" class="h-full bg-amber-500" style="width: 5%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytical Virtual Sensors (Rule 6: Model-Derived Estimates) -->
+      <div id="card-virtual-sensors" class="tactical-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-purple-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Analytical Virtual Sensors
+            </h2>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
+            MODEL-DERIVED ESTIMATE
+          </span>
+        </div>
+        <p class="text-[10px] text-gray-500 mb-3">
+          Rule 6: Inferred from thermodynamic conservation laws. Not physical transducer signals.
+        </p>
+
+        <div class="flex flex-col gap-2.5">
+          <!-- IMEP -->
+          <div class="border border-gray-800 bg-black/40 p-2.5 rounded">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-gray-300 font-bold">Mean IMEP (Mean Effective Press):</span>
+              <span class="text-purple-400 font-bold text-sm"><span id="val-imep-mean">6.2</span> bar <span class="text-[9px] text-gray-400 font-normal">(±0.35 bar)</span></span>
+            </div>
+            <div class="text-[10px] text-gray-500 mt-0.5 font-mono">
+              Eq: IMEP_i = (P_fuel_i · η_th · 120) / (V_d · RPM)
+            </div>
+          </div>
+
+          <!-- Blowby Flow -->
+          <div class="border border-gray-800 bg-black/40 p-2.5 rounded">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-gray-300 font-bold">Crankcase Blowby Flow Rate:</span>
+              <span class="text-purple-400 font-bold text-sm"><span id="val-blowby">5.8</span> L/min <span class="text-[9px] text-gray-400 font-normal">(±1.2 L/min)</span></span>
+            </div>
+            <div class="text-[10px] text-gray-500 mt-0.5 font-mono">
+              Eq: m_dot_blowby = k_ring · √(ΔP_crankcase)
+            </div>
+          </div>
+
+          <!-- Hydrodynamic Oil Film Thickness -->
+          <div class="border border-gray-800 bg-black/40 p-2.5 rounded">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-gray-300 font-bold">Hydrodynamic Film (h_min):</span>
+              <span class="text-purple-400 font-bold text-sm"><span id="val-oil-film">4.2</span> µm <span class="text-[9px] text-gray-400 font-normal">(±0.45 µm)</span></span>
+            </div>
+            <div class="text-[10px] text-gray-500 mt-0.5 font-mono">
+              Eq: h_min = 2.8 · (μ_oil · N^0.5 · P_oil^0.5)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Prognostics RUL Horizon & Fault Injection Rig (Cols 10-12) -->
+    <section class="col-span-12 lg:col-span-3 flex flex-col gap-4">
+      <!-- Stochastic Wiener RUL Horizon -->
+      <div id="card-prognostics" class="tactical-card p-4 transition-all duration-300">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-cyan-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Prognostics RUL Horizon
+            </h2>
+          </div>
+          <span class="text-[10px] text-cyan-400 font-bold">WIENER FHT</span>
+        </div>
+
+        <!-- Health Index Meter -->
+        <div class="flex items-center justify-between bg-black/40 border border-gray-800 p-3 rounded mb-3">
+          <div>
+            <div class="text-[10px] text-gray-400">ENGINE HEALTH INDEX</div>
+            <div class="text-2xl font-bold font-orbitron text-emerald-400 mt-0.5">
+              <span id="val-health-pct">98.5</span>%
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] text-gray-400">LOAD SEVERITY</div>
+            <div class="text-sm font-bold text-gray-200 mt-0.5">
+              <span id="val-severity">0.52</span>x
+            </div>
+          </div>
+        </div>
+
+        <!-- RUL Quantiles Fan (P10 / P50 / P90) -->
+        <div class="border border-gray-800 bg-black/50 p-3 rounded mb-2">
+          <div class="text-[10px] text-gray-400 uppercase font-bold mb-2">Remaining Useful Flight Hours:</div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="border border-gray-800 bg-black/40 p-1.5 rounded">
+              <div class="text-[9px] text-red-400 font-bold">P10 (Worst)</div>
+              <div class="text-sm font-bold text-white mt-0.5"><span id="val-rul-p10">289</span>h</div>
+            </div>
+            <div class="border border-cyan-800/80 bg-cyan-950/20 p-1.5 rounded">
+              <div class="text-[9px] text-cyan-400 font-bold">P50 (Median)</div>
+              <div class="text-sm font-bold text-cyan-300 mt-0.5"><span id="val-rul-p50">492</span>h</div>
+            </div>
+            <div class="border border-gray-800 bg-black/40 p-1.5 rounded">
+              <div class="text-[9px] text-emerald-400 font-bold">P90 (Best)</div>
+              <div class="text-sm font-bold text-white mt-0.5"><span id="val-rul-p90">847</span>h</div>
+            </div>
+          </div>
+          <div class="mt-2 text-[9px] text-gray-500">
+            TBO Limit: 1500.0 hrs | Drift rate μ(t): state-dependent
+          </div>
+        </div>
+
+        <!-- Live Rolling RUL Prognostics Horizon Fan Chart (P10 - P50 - P90) -->
+        <div class="mt-3 pt-3 border-t border-gray-800/80">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              Live RUL Horizon Fan (60s Operational)
+            </span>
+            <span class="text-[9px] text-cyan-400 font-mono">WIENER FAN</span>
+          </div>
+          <div class="relative w-full h-[155px] bg-black/60 rounded border border-gray-900 overflow-hidden">
+            <canvas id="rul-fan-canvas" class="w-full h-full"></canvas>
+          </div>
+          <div class="flex items-center justify-between text-[9px] text-gray-400 mt-1.5 font-mono">
+            <span class="flex items-center gap-1 text-red-400"><span class="inline-block w-2.5 h-0.5 bg-red-400"></span>P10 (Worst)</span>
+            <span class="flex items-center gap-1 text-cyan-400"><span class="inline-block w-2.5 h-0.5 bg-cyan-400"></span>P50 (Median)</span>
+            <span class="flex items-center gap-1 text-emerald-400"><span class="inline-block w-2.5 h-0.5 bg-emerald-400"></span>P90 (Best)</span>
+            <span class="text-gray-500">Shaded: Corridor</span>
+          </div>
+        </div>
+
+        <div class="text-[9px] text-gray-500 border-t border-gray-800/60 pt-2 mt-2">
+          Rule 5 Disclosure: Stochastic Wiener model with inverse-Gaussian first-hitting-time. Model-derived estimate; no physical failure data fabricated.
+        </div>
+      </div>
+
+      <!-- Flight Envelope & Fault Injection Rig -->
+      <div id="card-fault-rig" class="tactical-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 bg-yellow-500 rounded-sm"></span>
+            <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+              Envelope & Fault Rig
+            </h2>
+          </div>
+          <span class="text-[9px] text-yellow-400 font-mono flex items-center gap-1">
+            <kbd class="hotkey-badge">1-6</kbd> HOTKEYS
+          </span>
+        </div>
+
+        <!-- Altitude Slider (0 - 9000 m) -->
+        <div class="mb-3">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-gray-400">Mission Altitude:</span>
+            <span class="text-cyan-400 font-bold"><span id="lbl-altitude">0</span> m (ISA)</span>
+          </div>
+          <input type="range" id="slider-altitude" min="0" max="9000" step="100" value="0" class="w-full accent-cyan-500" />
+        </div>
+
+        <!-- Throttle Slider (0 - 100%) -->
+        <div class="mb-3">
+          <div class="flex justify-between text-xs mb-1">
+            <span class="text-gray-400">Throttle Position:</span>
+            <span class="text-emerald-400 font-bold"><span id="lbl-throttle">75</span>%</span>
+          </div>
+          <input type="range" id="slider-throttle" min="10" max="100" step="1" value="75" class="w-full accent-emerald-500" />
+        </div>
+
+        <!-- Fault Buttons Grid -->
+        <div class="text-[10px] text-gray-400 uppercase font-bold mb-1.5 flex justify-between items-center">
+          <span>Inject Controlled Fault:</span>
+          <span class="text-[9px] text-yellow-500/80 font-mono">KEYS 1-6</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="INJECTOR_COKING_CYL3" title="Hotkey: 1">
+            <kbd class="hotkey-badge">1</kbd>
+            <span>🔴 Injector Clog (Cyl 3)</span>
+          </button>
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="EXHAUST_VALVE_RECESSION_CYL2" title="Hotkey: 2">
+            <kbd class="hotkey-badge">2</kbd>
+            <span>🔴 Valve Recession (Cyl 2)</span>
+          </button>
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="RING_SCUFFING_BLOWBY" title="Hotkey: 3">
+            <kbd class="hotkey-badge">3</kbd>
+            <span>🔴 Ring Scuffing Blowby</span>
+          </button>
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="TURBO_BEARING_COKING" title="Hotkey: 4">
+            <kbd class="hotkey-badge">4</kbd>
+            <span>🔴 Turbo Bearing Drag</span>
+          </button>
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="OIL_SHEAR_CAVITATION" title="Hotkey: 5">
+            <kbd class="hotkey-badge">5</kbd>
+            <span>🔴 Oil Shear / Press Drop</span>
+          </button>
+          <button class="btn-fault text-[10px] p-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 rounded text-left flex items-center gap-1.5" data-fault="SENSOR_DRIFT_CHT1" title="Hotkey: 6">
+            <kbd class="hotkey-badge">6</kbd>
+            <span>🔴 CHT 1 Sensor Drift</span>
+          </button>
+        </div>
+
+        <button id="btn-reset-rig" class="w-full mt-2 bg-emerald-900/60 hover:bg-emerald-800 text-emerald-300 border border-emerald-700 py-1.5 rounded text-xs font-bold transition flex items-center justify-center gap-2" title="Hotkey: 0 or ESC">
+          <kbd class="hotkey-badge text-emerald-300 border-emerald-600 bg-emerald-950">0 / ESC</kbd>
+          <span>RESET TO HEALTHY BASELINE</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- BOTTOM ROW: Lineage & Provenance Auditor + MAVLink EFI Stream (Cols 1-12) -->
+    <section class="col-span-12 border border-gray-800 bg-[#07090e] rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <span class="h-2.5 w-2.5 bg-blue-500 rounded-sm"></span>
+          <h2 class="font-orbitron font-bold text-xs uppercase tracking-wider text-gray-200">
+            Avionics Telemetry Lineage & MAVLink EFI_STATUS Stream (Msg ID 225)
+          </h2>
+        </div>
+        <div class="text-[10px] text-gray-400">
+          DO-178C TRACEABILITY | DATA LINEAGE AUDIT ACTIVE
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Live CAN Lineage Audit Sample -->
+        <div class="border border-gray-800 bg-black/60 p-3 rounded text-[11px]">
+          <div class="text-gray-400 font-bold mb-1">CAN 2.0B / J1939 EXTENDED SIGNAL PROVENANCE:</div>
+          <div class="font-mono text-gray-300 space-y-0.5">
+            <div>SIGNAL: <span class="text-cyan-400">engine_speed_rpm</span> -> FRAME: <span class="text-emerald-400">0x18FEE000</span> | PGN: 0xFEE0 | SPN: 190</div>
+            <div>RAW BYTES SLICE: <span id="lineage-rpm-hex" class="text-yellow-400">0x28A0</span> (Decoded: <span id="lineage-rpm-dec">4800.0</span> rpm)</div>
+            <div>SCALE: 0.125 | OFFSET: 0.0 | SOURCE: ECU-ROTAX-01 | TIMESTAMPS: <span id="lineage-ts" class="text-gray-400">1725350402.124</span></div>
+          </div>
+        </div>
+
+        <!-- MAVLink Downlink Monitor -->
+        <div class="border border-gray-800 bg-black/60 p-3 rounded text-[11px]">
+          <div class="text-gray-400 font-bold mb-1">MAVLINK v2 EFI_STATUS (Msg 225) DOWNLINK:</div>
+          <div class="font-mono text-gray-300 space-y-0.5">
+            <div>PACKET: <span id="mav-hex" class="text-gray-400 break-all text-[9px]">FD390000420164E10000...</span></div>
+            <div>DECODED: RPM: <span id="mav-rpm" class="text-emerald-400">4800</span> | MAP: <span id="mav-map" class="text-cyan-400">98.2</span> kPa | CHT: <span id="mav-cht" class="text-orange-400">105.4</span>°C | EGT: <span id="mav-egt" class="text-red-400">810.0</span>°C</div>
+            <div>HEALTH FLAG: <span id="mav-health" class="text-emerald-400 font-bold">HEALTHY</span> (Downlinked to GCS Flight Ops)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating Operator Action Toast Container -->
+  <div id="gcs-toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
