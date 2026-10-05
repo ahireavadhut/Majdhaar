@@ -1,6 +1,9 @@
 """
-PINN Observer Training Pipeline
-Trains Physics-Informed Neural Network with conservation loss terms.
+PINN observer training pipeline.
+
+Trains a Physics-Informed Neural Network (PINN) observer using
+telemetry data, digital-twin predictions, and conservation-based
+physics loss terms.
 """
 import torch
 from torch.utils.data import DataLoader
