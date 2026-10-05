@@ -278,3 +278,11 @@ Pure data-driven models can produce non-physical states and need large run-to-fa
 ## Team
 
 **Majdhaar**
+With deep respect for contributions from our respective team members.
+Members: 
+=> Saurabh Ahire(Team leader)
+=> Kshitij Aryan
+=> Prashant Gupta
+=> Muduku Viswa
+=> Sanidhya Singh 
+=> Ishika Prajapati
