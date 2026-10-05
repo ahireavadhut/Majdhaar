@@ -38,6 +38,7 @@ class PhysicsInformedResidualObserver(nn.Module):
 
 class PhysicsInformedLoss(nn.Module):
     """
+    Compute the total physics-informed loss.
     L_total = L_data + lambda_mass * L_mass + lambda_energy * L_energy + lambda_mono * L_mono
     """
     def __init__(self, lambda_mass: float = 0.05, lambda_energy: float = 0.05, lambda_mono: float = 0.02):
