@@ -1,0 +1,44 @@
+{
+  "calibration_run_id": "run02_healthy_cruise_climb",
+  "sample_count": 600,
+  "envelope": {
+    "rpm_min": 4963.0,
+    "rpm_max": 5041.2,
+    "map_min_kpa": 103.8,
+    "map_max_kpa": 106.2,
+    "throttle_max_pct": 80.8
+  },
+  "calibrated_parameters": {
+    "volumetric_efficiency_base": 0.9028,
+    "r_coolant": 0.0806,
+    "throttle_discharge_cd": 0.655,
+    "combustion_efficiency": 0.342
+  },
+  "residual_statistics": {
+    "map_kpa": {
+      "mae": 1.742,
+      "rmse": 1.795,
+      "bias": 1.742,
+      "max_abs_error": 3.04
+    },
+    "cht_deg_c": {
+      "mae": 4.028,
+      "rmse": 5.301,
+      "bias": 3.974,
+      "max_abs_error": 14.0
+    },
+    "egt_deg_c": {
+      "mae": 3.792,
+      "rmse": 5.426,
+      "bias": 2.375,
+      "max_abs_error": 38.2
+    },
+    "oil_pressure_bar": {
+      "mae": 0.0194,
+      "rmse": 0.0243,
+      "bias": -0.0119,
+      "max_abs_error": 0.082
+    }
+  },
+  "audit_verification": "LEVEL_2_BASELINE_VERIFIED_PASS"
+}

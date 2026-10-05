@@ -1,0 +1,25 @@
+run_id: run09_fault_injection_thermocouple_drift
+dataset_type: CONTROLLED_FAULT_INJECTION
+data_lineage_label: CONTROLLED_FAULT_INJECTION
+target_platform: DRDO TAPAS-BH-201 MALE UAV
+engine_model: Rotax 914 F / Rotax 915 iS Turbocharged Boxer
+ecu_firmware_rev: FADEC-TAPAS-v4.18
+test_cell: HAL/DRDO Propulsion Test Cell 4
+operator: Senior Test Specialist (Aero Propulsion)
+start_timestamp_utc: 1725350400.0
+duration_seconds: 50.0
+operating_profile: 'Cruise with CHT #1 Thermocouple Junction Oxidation Drift'
+raw_log_file: data/raw/run09_fault_injection_thermocouple_drift_can.log
+decoded_file: data/decoded/run09_fault_injection_thermocouple_drift.json
+total_can_frames: 6500
+sample_rate_hz: 50
+ambient_conditions:
+  temperature_c: 15.0
+  pressure_kpa: 101.325
+  relative_humidity_pct: 55.0
+fault_injection_metadata:
+  type: SENSOR_DRIFT_CHT1
+  start_s: 15.0
+compliance_disclosure: Complies with SIH 26054 Rule 1, 4, 8 & 9. Any injected fault
+  is an explicit software-level test transformation and is NOT natural wear.
+remarks: 'Explicit test fault: creeping offset on CHT1 without load correlation.'

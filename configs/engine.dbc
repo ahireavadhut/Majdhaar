@@ -1,0 +1,66 @@
+VERSION ""
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: ECU TWIN_GCS SENSOR_NODE
+
+BO_ 2566840320 ENGINE_DYNAMICS: 8 ECU
+ SG_ engine_speed_rpm : 0|16@1+ (0.125,0) [0|8000] "rpm" TWIN_GCS
+ SG_ manifold_air_pressure_kpa : 16|16@1+ (0.01,0) [20|250] "kPa" TWIN_GCS
+ SG_ throttle_position_pct : 32|8@1+ (0.4,0) [0|100] "%" TWIN_GCS
+ SG_ bus_voltage_v : 40|8@1+ (0.1,0) [0|25.5] "V" TWIN_GCS
+ SG_ engine_status_flags : 48|16@1+ (1,0) [0|65535] "" TWIN_GCS
+
+BO_ 2566840576 THERMAL_MATRIX_1_CHT: 8 ECU
+ SG_ cht_cyl1_deg_c : 0|16@1+ (0.1,0) [-40|250] "degC" TWIN_GCS
+ SG_ cht_cyl2_deg_c : 16|16@1+ (0.1,0) [-40|250] "degC" TWIN_GCS
+ SG_ cht_cyl3_deg_c : 32|16@1+ (0.1,0) [-40|250] "degC" TWIN_GCS
+ SG_ cht_cyl4_deg_c : 48|16@1+ (0.1,0) [-40|250] "degC" TWIN_GCS
+
+BO_ 2566840832 THERMAL_MATRIX_2_EGT: 8 ECU
+ SG_ egt_cyl1_deg_c : 0|16@1+ (0.1,0) [0|1200] "degC" TWIN_GCS
+ SG_ egt_cyl2_deg_c : 16|16@1+ (0.1,0) [0|1200] "degC" TWIN_GCS
+ SG_ egt_cyl3_deg_c : 32|16@1+ (0.1,0) [0|1200] "degC" TWIN_GCS
+ SG_ egt_cyl4_deg_c : 48|16@1+ (0.1,0) [-0|1200] "degC" TWIN_GCS
+
+BO_ 2566841088 FLUIDS_AND_LUBE: 8 ECU
+ SG_ oil_pressure_bar : 0|16@1+ (0.001,0) [0|10] "bar" TWIN_GCS
+ SG_ oil_temperature_deg_c : 16|16@1+ (0.1,-40) [-40|180] "degC" TWIN_GCS
+ SG_ fuel_flow_rate_lph : 32|16@1+ (0.01,0) [0|120] "L/h" TWIN_GCS
+ SG_ fuel_pressure_bar : 48|16@1+ (0.001,0) [0|10] "bar" TWIN_GCS
+
+BO_ 2566841344 VIBRATION_AND_BLOWBY: 8 SENSOR_NODE
+ SG_ rms_vibration_g : 0|16@1+ (0.001,0) [0|20] "g" TWIN_GCS
+ SG_ peak_knock_intensity_bar : 16|16@1+ (0.001,0) [0|30] "bar" TWIN_GCS
+ SG_ crankcase_pressure_mbar : 32|16@1+ (0.01,-50) [-50|150] "mbar" TWIN_GCS
+ SG_ coolant_temperature_deg_c : 48|16@1+ (0.1,-40) [-40|150] "degC" TWIN_GCS

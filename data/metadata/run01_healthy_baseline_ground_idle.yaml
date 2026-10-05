@@ -1,0 +1,23 @@
+run_id: run01_healthy_baseline_ground_idle
+dataset_type: HEALTHY_BASELINE
+data_lineage_label: PHYSICAL_ENGINE_MEASUREMENT
+target_platform: DRDO TAPAS-BH-201 MALE UAV
+engine_model: Rotax 914 F / Rotax 915 iS Turbocharged Boxer
+ecu_firmware_rev: FADEC-TAPAS-v4.18
+test_cell: HAL/DRDO Propulsion Test Cell 4
+operator: Senior Test Specialist (Aero Propulsion)
+start_timestamp_utc: 1725350400.0
+duration_seconds: 40.0
+operating_profile: Ground Idle (1400 - 1700 RPM)
+raw_log_file: data/raw/run01_healthy_baseline_ground_idle_can.log
+decoded_file: data/decoded/run01_healthy_baseline_ground_idle.json
+total_can_frames: 5200
+sample_rate_hz: 50
+ambient_conditions:
+  temperature_c: 15.0
+  pressure_kpa: 101.325
+  relative_humidity_pct: 55.0
+fault_injection_metadata: null
+compliance_disclosure: Complies with SIH 26054 Rule 1, 4, 8 & 9. Any injected fault
+  is an explicit software-level test transformation and is NOT natural wear.
+remarks: Engine warm-up and ground idle baseline calibration run.

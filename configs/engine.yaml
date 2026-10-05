@@ -1,0 +1,75 @@
+# Aero Piston Engine Specification: Rotax 914 F / Rotax 915 iS (DRDO TAPAS-BH-201 MALE UAV)
+engine:
+  model: "Rotax 914 F / 915 iS FADEC"
+  platform: "DRDO TAPAS-BH-201 MALE UAV"
+  type: "4-Stroke, 4-Cylinder Horizontally-Opposed Boxer"
+  cooling: "Liquid-cooled cylinder heads, ram-air cooled cylinder barrels"
+  induction: "Turbocharged with wastegate and integrated intercooler"
+  fuel_system: "Dual electronic port fuel injection (EFI)"
+
+geometry:
+  bore_m: 0.0795          # 79.5 mm
+  stroke_m: 0.0610        # 61.0 mm
+  cylinders: 4
+  displacement_m3: 0.001211  # 1.211 Liters (1211 cc)
+  compression_ratio: 9.0
+  connecting_rod_length_m: 0.105
+
+rated_operating_limits:
+  rated_rpm: 5500.0
+  takeoff_rpm: 5800.0
+  idle_rpm: 1400.0
+  max_continuous_power_kw: 84.5  # 115 HP
+  rated_power_kw: 73.5           # 100 HP continuous
+  max_map_kpa: 140.0             # Turbo boost maximum
+  idle_map_kpa: 35.0
+
+thermal_limits:
+  cht_nominal_deg_c: 105.0
+  cht_max_continuous_deg_c: 120.0
+  cht_redline_deg_c: 135.0
+  egt_nominal_deg_c: 820.0
+  egt_max_continuous_deg_c: 880.0
+  egt_redline_deg_c: 950.0
+  coolant_nominal_deg_c: 85.0
+  oil_temp_nominal_deg_c: 90.0
+  oil_temp_redline_deg_c: 130.0
+
+lubrication_limits:
+  oil_pressure_nominal_bar: 3.5
+  oil_pressure_min_bar: 1.5
+  oil_pressure_max_bar: 5.5
+  oil_dynamic_viscosity_ref_pa_s: 0.045  # SAE 10W-40 at 90 deg C
+
+combustion_blowby_limits:
+  crankcase_pressure_nominal_mbar: 2.5
+  crankcase_pressure_warning_mbar: 8.0
+  crankcase_pressure_critical_mbar: 12.0
+  blowby_flow_nominal_lpm: 6.5
+  blowby_flow_warning_lpm: 15.0
+  blowby_flow_critical_lpm: 20.0
+  rms_vibration_nominal_g: 0.8
+  rms_vibration_warning_g: 2.2
+  rms_vibration_critical_g: 4.5
+
+wiebe_parameters:
+  a: 5.0
+  m: 2.0
+  combustion_duration_deg: 55.0
+  ignition_timing_deg_btdc: 24.0
+
+lumped_thermal_network:
+  c_head_j_per_k: 450.0        # Thermal capacitance of each cylinder head
+  r_coolant_k_per_w: 0.085    # Thermal resistance head to coolant jacket
+  r_ambient_k_per_w: 0.22     # Thermal resistance head to cowl ambient air
+  woschni_c1: 3.26
+  woschni_b_exp: -0.2
+  woschni_p_exp: 0.8
+  woschni_t_exp: -0.55
+  woschni_w_exp: 0.8
+
+wiener_rul_parameters:
+  failure_threshold_d_th: 1.0   # Normalized degradation threshold (1.0 = failure/TBO)
+  baseline_drift_mu0: 0.00045   # Degradation per hour under nominal cruise
+  diffusion_sigma_w: 0.008      # Wiener diffusion coefficient
+  tbo_hours: 1500.0             # Rotax Time-Between-Overhauls

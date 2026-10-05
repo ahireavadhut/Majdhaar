@@ -1,0 +1,26 @@
+run_id: run08_fault_injection_oil_shear
+dataset_type: CONTROLLED_FAULT_INJECTION
+data_lineage_label: CONTROLLED_FAULT_INJECTION
+target_platform: DRDO TAPAS-BH-201 MALE UAV
+engine_model: Rotax 914 F / Rotax 915 iS Turbocharged Boxer
+ecu_firmware_rev: FADEC-TAPAS-v4.18
+test_cell: HAL/DRDO Propulsion Test Cell 4
+operator: Senior Test Specialist (Aero Propulsion)
+start_timestamp_utc: 1725350400.0
+duration_seconds: 50.0
+operating_profile: Endurance Cruise with Oil Viscosity Breakdown & Cavitation
+raw_log_file: data/raw/run08_fault_injection_oil_shear_can.log
+decoded_file: data/decoded/run08_fault_injection_oil_shear.json
+total_can_frames: 6500
+sample_rate_hz: 50
+ambient_conditions:
+  temperature_c: 15.0
+  pressure_kpa: 101.325
+  relative_humidity_pct: 55.0
+fault_injection_metadata:
+  type: OIL_SHEAR_CAVITATION
+  start_s: 15.0
+compliance_disclosure: Complies with SIH 26054 Rule 1, 4, 8 & 9. Any injected fault
+  is an explicit software-level test transformation and is NOT natural wear.
+remarks: "Explicit test fault: decaying oil pressure to 1.3 bar, oil temp > 118\xB0\
+  C."

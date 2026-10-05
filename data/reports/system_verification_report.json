@@ -1,0 +1,81 @@
+{
+  "level1_signal_integrity": {
+    "status": "PASS",
+    "frames_verified": 5200
+  },
+  "level2_twin_baseline": {
+    "status": "PASS",
+    "map_mae_kpa": 2.48,
+    "cht_mae_degc": 1.879,
+    "egt_mae_degc": 6.897,
+    "oil_press_mae_bar": 0.173
+  },
+  "level3_anomaly_detection": {
+    "run04_fault_injection_injector_coking": {
+      "expected_fault": "INJECTOR_COKING",
+      "detected_fault": "INJECTOR_COKING",
+      "ata100_chapter": "ATA-73-10 (Engine Fuel Injection & Metering)",
+      "severity": "CAUTION",
+      "detection_step": 205,
+      "work_order": "ATA-73-10-02: Flow-test port fuel injector #3 on test rig. Ultrasonically clean or replace injector nozzle; verify rail pressure balance."
+    },
+    "run05_fault_injection_exhaust_valve": {
+      "expected_fault": "EXHAUST_VALVE_RECESSION",
+      "detected_fault": "EXHAUST_VALVE_RECESSION",
+      "ata100_chapter": "ATA-72-40 (Engine - Valvetrain & Cylinder Heads)",
+      "severity": "CRITICAL",
+      "detection_step": 221,
+      "work_order": "ATA-72-40-02: Measure exhaust valve lash on Cylinder #2. Check valve stem height and perform differential compression leak test."
+    },
+    "run06_fault_injection_ring_scuffing": {
+      "expected_fault": "RING_PACK_SCUFFING",
+      "detected_fault": "RING_PACK_SCUFFING",
+      "ata100_chapter": "ATA-72-30 (Engine - Cylinder Section & Piston Rings)",
+      "severity": "CAUTION",
+      "detection_step": 191,
+      "work_order": "ATA-72-30-01: Borescope cylinder bores 1-4 for longitudinal scuffing. Inspect crankcase breather check-valve and perform differential compression check."
+    },
+    "run07_fault_injection_turbo_drag": {
+      "expected_fault": "TURBO_BEARING_COKING",
+      "detected_fault": "TURBO_BEARING_COKING",
+      "ata100_chapter": "ATA-81-10 (Turbocharger & Wastegate System)",
+      "severity": "CAUTION",
+      "detection_step": 241,
+      "work_order": "ATA-81-10-01: Inspect turbocharger compressor and turbine wheels for radial play and oil coking. Verify wastegate actuator pneumatic line pressure."
+    },
+    "run08_fault_injection_oil_shear": {
+      "expected_fault": "OIL_THERMAL_SHEAR",
+      "detected_fault": "OIL_THERMAL_SHEAR",
+      "ata100_chapter": "ATA-79-10 (Engine Oil Storage & Distribution)",
+      "severity": "CAUTION",
+      "detection_step": 223,
+      "work_order": "ATA-79-10-04: Drain engine oil, inspect magnetic chip detector for bronze/babbitt flakes, replace oil filter element and verify pressure relief spring tension."
+    },
+    "run09_fault_injection_thermocouple_drift": {
+      "expected_fault": "SENSOR_DRIFT",
+      "detected_fault": "SENSOR_DRIFT",
+      "ata100_chapter": "ATA-77-20 (Engine Indicating - Temperature)",
+      "severity": "ADVISORY",
+      "detection_step": 216,
+      "work_order": "ATA-77-20-03: Inspect harness connector resistance on CHT thermocouple probe #1. Recalibrate or replace probe."
+    }
+  },
+  "level5_virtual_sensors": {
+    "status": "PASS",
+    "imep_mean_bar": 3.12,
+    "blowby_lpm": 6.2,
+    "oil_film_um": 12.0
+  },
+  "wiener_rul_prognostics": {
+    "status": "PASS",
+    "health_index": 0.985,
+    "p10_hours": 525.1,
+    "p50_hours": 587.9,
+    "p90_hours": 658.2,
+    "disclosures": "MODEL_DERIVED_PROGNOSTICS (No destructive physical wear datasets fabricated)"
+  },
+  "mavlink_bridge": {
+    "status": "PASS",
+    "bytes_length": 85
+  }
+}
